@@ -21,12 +21,19 @@ const menuItems = [
     { name: "Hamburguesa Chipotle", price: 60.00, img: "https://img.freepik.com/fotos-premium/hamburguesa-mucho-humo-sobre-fondo-oscuro_856795-3589.jpg" }
 ];
 
+const ingredientes = ["Tomate", "Queso", "Cebolla", "Lechuga", "Chipotle"];
 const menuContainer = document.getElementById('menu-items');
 const cartList = document.getElementById('cart-list');
 const totalPriceElement = document.getElementById('total-price');
 let total = 0;
 
-menuItems.forEach(item => {
+menuItems.forEach((item, index) => {
+    let ingredientsCheckboxes = ingredientes.map(ingrediente => 
+        `<label class="ingrediente-label">
+            <input type="checkbox" class="ingrediente" data-index="${index}" value="${ingrediente}" checked> ${ingrediente}
+        </label>`
+    ).join('');
+
     const itemHTML = `
         <div class="col-md-3 mb-4">
             <div class="card menu-item">
@@ -34,7 +41,8 @@ menuItems.forEach(item => {
                 <div class="card-body text-center">
                     <h5 class="card-title">${item.name}</h5>
                     <p class="card-text">Q${item.price.toFixed(2)}</p>
-                    <button class="btn btn-primary" onclick="addToCart('${item.name}', ${item.price})">Agregar</button>
+                    <div>${ingredientsCheckboxes}</div>
+                    <button class="btn btn-primary" onclick="addToCart(${index})">Agregar</button>
                 </div>
             </div>
         </div>
@@ -42,12 +50,27 @@ menuItems.forEach(item => {
     menuContainer.innerHTML += itemHTML;
 });
 
-function addToCart(name, price) {
+function addToCart(index) {
+    const selectedItem = menuItems[index];
+    const checkboxes = document.querySelectorAll(`.ingrediente[data-index="${index}"]`);
+    let ingredientesSeleccionados = [];
+    checkboxes.forEach(checkbox => {
+        if (!checkbox.checked) {
+            ingredientesSeleccionados.push(checkbox.value);
+        }
+    });
+
+    const modificaciones = ingredientesSeleccionados.length > 0 ? `<div class="cart-item-details">Sin: ${ingredientesSeleccionados.join(', ')}</div>` : '';
+    
     const cartItem = document.createElement('li');
     cartItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-    cartItem.innerHTML = `${name} - Q${price.toFixed(2)} <button class="btn btn-danger btn-sm" onclick="removeFromCart(this, ${price})">X</button>`;
+    cartItem.innerHTML = `<div>
+        ${selectedItem.name} - Q${selectedItem.price.toFixed(2)}
+        ${modificaciones}
+    </div> 
+    <button class="btn btn-danger btn-sm" onclick="removeFromCart(this, ${selectedItem.price})">X</button>`;
     cartList.appendChild(cartItem);
-    total += price;
+    total += selectedItem.price;
     totalPriceElement.textContent = total.toFixed(2);
 }
 

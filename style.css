@@ -28,3 +28,18 @@
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+.ingrediente-label {
+    display: block;
+    background: #f8f9fa;
+    padding: 5px;
+    margin: 3px 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.ingrediente-label input {
+    margin-right: 5px;
+}
+.cart-item-details {
+    font-size: 0.9em;
+    color: gray;
+}
